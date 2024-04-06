@@ -3,8 +3,7 @@ import streamlit as st
 from libs.data import load_data, save_data
 
 def RiskReward():
-    st.title("Auto Square Off Algo")
-    st.write("This tool will auto square off based on MTM")
+    st.title("Risk Reward")
 
     # Load existing values from JSON (or set defaults)
     data = load_data()

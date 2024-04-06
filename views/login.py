@@ -5,7 +5,7 @@ from libs.auth import authenticate
 
 def Login():
     try:
-        st.write("Login")
+        st.title("Login")
 
         email = st.text_input(label="Email", type="default", key="email_input")
         password = st.text_input(label="Password", type="password", key="password_input")
@@ -14,5 +14,4 @@ def Login():
         if submit:
             authenticate(email, password)
     except Exception as e:
-        print(e)
         st.error("Login failed. Invalid Credentials")

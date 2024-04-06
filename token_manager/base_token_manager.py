@@ -14,11 +14,11 @@ class BaseTokenManager:
         home_directory = os.path.expanduser("~")
 
         self.data_path = Path(
-            f"{home_directory}/angelalgo/{path_name}/data/{unique_id}"
+            f"{home_directory}/algo_trading/{path_name}/data/{unique_id}"
         )
 
         self.logs_path = Path(
-            f"{home_directory}/angelalgo/{path_name}/logs/{unique_id}"
+            f"{home_directory}/algo_trading/{path_name}/logs/{unique_id}"
         )
 
         if not self.data_path.exists():

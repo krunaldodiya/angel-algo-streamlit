@@ -12,14 +12,16 @@ from views.settings import Settings
 
 def async_task():
     try:
-        token_manager = AngelOneTokenManager()
+        token_manager = AngelOneTokenManager(
+            client_id="D457786",
+            totp_key="LFVUUZRSIWZNLNSY574LKZOSIY",
+            mpin="6815",
+            api_key="RUVdxvhp",
+            api_secret="da173a94-6b0f-4dbe-975f-b29156806b96",
+            redirect_url="http://127.0.0.1:3333/brokers/angelone/callback",
+        )
 
         print(token_manager)
-
-        while True:
-            # Your square-off logic goes here
-            print("datetime", datetime.now())
-            sleep(1)  # Replace with your desired sleep time
     except Exception as e:
         print(e)
 

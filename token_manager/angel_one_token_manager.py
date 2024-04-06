@@ -35,7 +35,7 @@ class AngelOneTokenManager(BaseTokenManager):
         self.initialize()
 
 
-    def get_totp(totp_key):
+    def get_totp(self, totp_key):
         return pyotp.TOTP(totp_key).now()
 
     def set_token(self, token: str) -> None:

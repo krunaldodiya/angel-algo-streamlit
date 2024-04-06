@@ -1,11 +1,10 @@
 import pyrebase
 
 config = {
-  "apiKey": "AIzaSyBCdZx44BDCDrzggF1gJgd50lrdOisumjI",
-  "authDomain": "angel-algo-streamlit.firebaseapp.com",
-  "databaseURL": "https://angel-algo-streamlit-default-rtdb.firebaseio.com",
-  "storageBucket": "angel-algo-streamlit.appspot.com",
-  "appId": "1:572283903883:web:4906eccab4f9fa3872198e"
+  "apiKey": "AIzaSyACnXQ-QV1tmBvCLKFvbRaOhEITUYcciA4",
+  "authDomain": "angelalgo-5029f.firebaseapp.com",
+  "databaseURL": "https://angelalgo-5029f-default-rtdb.firebaseio.com",
+  "storageBucket": "angelalgo-5029f.appspot.com"
 }
 
 firebase = pyrebase.initialize_app(config)

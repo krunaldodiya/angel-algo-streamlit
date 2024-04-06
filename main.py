@@ -6,6 +6,7 @@ from time import sleep
 from libs.auth import is_authenticated
 from views.dashboard import Dashboard
 from views.login import Login
+from views.risk_reward import RiskReward
 from views.settings import Settings
 
 def async_task():
@@ -35,9 +36,11 @@ if __name__ == "__main__":
         page = Login()
     else:
         # User authenticated - Choose between Dashboard and Settings
-        page_selection = st.sidebar.selectbox("Select Page", ["Dashboard", "Settings"])
+        page_selection = st.sidebar.selectbox("Select Page", ["Dashboard", "Risk Reward", "Settings"])
 
         if page_selection == "Dashboard":
             page = Dashboard()
         elif page_selection == "Settings":
             page = Settings()
+        elif page_selection == "Risk Reward":
+            page = RiskReward()

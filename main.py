@@ -1,3 +1,4 @@
+import streamlit as st
 import threading
 
 from datetime import datetime
@@ -5,6 +6,7 @@ from time import sleep
 from libs.auth import is_authenticated
 from views.dashboard import Dashboard
 from views.login import Login
+from views.settings import Settings
 
 def async_task():
     while True:
@@ -26,9 +28,16 @@ if __name__ == "__main__":
     # Start the background task only once
     start_background_task()
 
+    # Authentication and Page Selection
     authenticated = is_authenticated()
 
-    if authenticated:
-        Dashboard()
+    if not authenticated:
+        page = Login()
     else:
-        Login()
+        # User authenticated - Choose between Dashboard and Settings
+        page_selection = st.sidebar.selectbox("Select Page", ["Dashboard", "Settings"])
+
+        if page_selection == "Dashboard":
+            page = Dashboard()
+        elif page_selection == "Settings":
+            page = Settings()

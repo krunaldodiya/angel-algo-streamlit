@@ -1,25 +1,6 @@
 import streamlit as st
-import json  # Import json library for file handling
 
-# Define the filename for storing stoploss and target values
-DATA_FILE = "stoploss_target.json"
-
-
-def load_data():
-    """Loads stoploss and target values from JSON file (if it exists)."""
-    try:
-        with open(DATA_FILE, "r") as file:
-            return json.load(file)
-    except FileNotFoundError:
-        # Return default values if file doesn't exist
-        return {"stoploss": None, "target": None}
-
-
-def save_data(data):
-    """Saves stoploss and target values to JSON file."""
-    with open(DATA_FILE, "w") as file:
-        json.dump(data, file, indent=2)  # Save with indentation for readability
-
+from libs.data import load_data, save_data
 
 def Dashboard():
     st.title("Auto Square Off Algo")
@@ -35,7 +16,7 @@ def Dashboard():
     new_target = st.number_input(label="Target", value=target)
 
     # Save button to update values
-    if st.button("Update Values"):
+    if st.button("Update"):
         # Update data dictionary with new values
         data["stoploss"] = new_stoploss
         data["target"] = new_target

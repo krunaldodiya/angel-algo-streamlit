@@ -19,10 +19,11 @@ def async_task():
             redirect_url="http://127.0.0.1:3333/brokers/angelone/callback",
         )
 
-        http_client = token_manager.get_http_client()
+        session = token_manager.get_session()
 
-
-        print("http_client". http_client)
+        profile = token_manager.http_client.getProfile(refreshToken=session["refreshToken"])
+        
+        print("profile", profile)
     except Exception as e:
         print(e)
 

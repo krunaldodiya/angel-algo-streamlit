@@ -43,7 +43,7 @@ class AngelOneTokenManager(BaseTokenManager):
 
     def get_token(self) -> str:
         session = self.get_session()
-        token: str = session["data"]["jwtToken"]
+        token: str = session["jwtToken"]
         return token
 
     def get_http_client(self) -> SmartConnect:
@@ -61,14 +61,14 @@ class AngelOneTokenManager(BaseTokenManager):
             self.get_totp(self.totp_key),
         )
 
-        return session
+        return session["data"]
 
     def get_ws_client(self) -> SmartWebSocketV2:
         try:
             session = self.get_session()
 
             ws_client = SmartWebSocketV2(
-                session["data"]["jwtToken"],
+                session["jwtToken"],
                 self.api_key,
                 self.client_id,
                 self.http_client.getfeedToken(),

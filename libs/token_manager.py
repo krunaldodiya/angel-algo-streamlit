@@ -12,15 +12,11 @@ def validate_token_manager(client_id, totp_key, mpin, api_key, api_secret, redir
             redirect_url=redirect_url,
         )
 
-        http_client = token_manager.get_http_client()
+        session = token_manager.get_session()
 
-        print("http_client", http_client)
+        profile = token_manager.http_client.getProfile(refreshToken=session["refreshToken"])
 
-        userProfile = http_client.getProfile()
-
-        print(userProfile)
-
-        if userProfile:
+        if profile['status']:
             return True
         else:
             return False

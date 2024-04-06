@@ -1,8 +1,8 @@
 import extra_streamlit_components as stx
 
-cookie_manager = stx.CookieManager()
+from libs import firebase
 
-SECRET = 'test'
+cookie_manager = stx.CookieManager()
 
 def is_authenticated():
   token = cookie_manager.get(cookie="token")
@@ -12,9 +12,9 @@ def is_authenticated():
   else:
     return True
 
-def authenticate(secret):
-  if secret == SECRET:
-    cookie_manager.set("token", SECRET)
-    return True
-  else:
-    return False
+def authenticate(email, password):
+  auth = firebase.firebase.auth()
+  user = auth.sign_in_with_email_and_password(email, password)
+  
+  if user['localId']:
+    cookie_manager.set("token", user['localId'])

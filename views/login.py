@@ -4,15 +4,15 @@ from libs.auth import authenticate
 
 
 def Login():
-    st.write("Login")
+    try:
+        st.write("Login")
 
-    secret = st.text_input(label="Secret Key", type="password", key="login_text_input")
-    submit = st.button(label="Authenticate", type="primary", key="login_submit_button")
+        email = st.text_input(label="Email", type="default", key="email_input")
+        password = st.text_input(label="Password", type="password", key="password_input")
+        submit = st.button(label="Authenticate", type="primary", key="login_submit_button")
 
-    if submit:
-        status = authenticate(secret)
-
-        if status:
-            print("auth success")
-        else:
-            st.write("Login failed. Invalid secret")
+        if submit:
+            authenticate(email, password)
+    except Exception as e:
+        print(e)
+        st.error("Login failed. Invalid Credentials")

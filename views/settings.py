@@ -10,14 +10,29 @@ def Settings():
 
         localId = auth.current_user['localId']
 
-        data = db.child("brokers").child(localId).get().val()
+        data = db.child("brokers").child(localId)
+        
+        if data:
+            client_id = data.get().val().get("client_id")
+            totp_key = data.get().val().get("totp_key")
+            mpin = data.get().val().get("mpin")
+            api_key = data.get().val().get("api_key")
+            api_secret = data.get().val().get("api_secret")
+            redirect_url = data.get().val().get("redirect_url")
+        else:
+            client_id = ""
+            totp_key = ""
+            mpin = ""
+            api_key = ""
+            api_secret = ""
+            redirect_url = ""
 
-        client_id = st.text_input(label="Client ID", type="default", key="client_id_input", value=data.get("client_id", ""))
-        totp_key = st.text_input(label="TOTP Key", type="password", key="totp_key_input", value=data.get("totp_key", ""))
-        mpin = st.text_input(label="MPIN", type="password", key="mpin_input", value=data.get("mpin", ""))
-        api_key = st.text_input(label="API Key", type="default", key="api_key_input", value=data.get("api_key", ""))
-        api_secret = st.text_input(label="API Secret", type="password", key="api_secret_input", value=data.get("api_secret", ""))
-        redirect_url = st.text_input(label="Redirect URL", type="default", key="redirect_url_input", value=data.get("redirect_url", ""))
+        client_id = st.text_input(label="Client ID", type="default", key="client_id_input", value=client_id)
+        totp_key = st.text_input(label="TOTP Key", type="password", key="totp_key_input", value=totp_key)
+        mpin = st.text_input(label="MPIN", type="password", key="mpin_input", value=mpin)
+        api_key = st.text_input(label="API Key", type="default", key="api_key_input", value=api_key)
+        api_secret = st.text_input(label="API Secret", type="password", key="api_secret_input", value=api_secret)
+        redirect_url = st.text_input(label="Redirect URL", type="default", key="redirect_url_input", value=redirect_url)
         submit = st.button(label="Update", type="primary", key="login_submit_button")
 
         if submit:

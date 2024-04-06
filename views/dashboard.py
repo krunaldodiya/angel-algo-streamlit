@@ -13,5 +13,5 @@ def Dashboard():
 
     # Display current stoploss and target values (optional)
     if stoploss is not None and target is not None:
-        st.write("Current Stoploss:", stoploss)
-        st.write("Current Target:", target)
+        st.write(f":red[Stoploss: {stoploss}]")
+        st.write(f":green[Target: {target}]")

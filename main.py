@@ -14,16 +14,23 @@ def async_task():
     try:
         localId = auth.current_user['localId']
 
-        data = db.child("brokers").child(localId).get().val()
+        data = db.child("brokers").child(localId)
 
         if data:
+            client_id = data.get().val().get("client_id")
+            totp_key = data.get().val().get("totp_key")
+            mpin = data.get().val().get("mpin")
+            api_key = data.get().val().get("api_key")
+            api_secret = data.get().val().get("api_secret")
+            redirect_url = data.get().val().get("redirect_url")
+        
             token_manager = AngelOneTokenManager(
-                client_id=data.get("client_id"),
-                totp_key=data.get("totp_key"),
-                mpin=data.get("mpin"),
-                api_key=data.get("api_key"),
-                api_secret=data.get("api_secret"),
-                redirect_url=data.get("redirect_url"),
+                client_id=client_id,
+                totp_key=totp_key,
+                mpin=mpin,
+                api_key=api_key,
+                api_secret=api_secret,
+                redirect_url=redirect_url,
             )
 
             print(token_manager)

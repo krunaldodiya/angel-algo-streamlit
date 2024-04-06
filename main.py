@@ -16,8 +16,6 @@ def async_task():
 
         data = db.child("brokers").child(localId).get().val()
 
-        print(data)
-
         if data:
             token_manager = AngelOneTokenManager(
                 client_id=data.get("client_id"),
@@ -41,16 +39,16 @@ def start_background_task():
         thread.start()
         setattr(threading, "background_process_running", True)
 
-if __name__ == "__main__":    
-    # Start the background task only once
-    start_background_task()
-
+if __name__ == "__main__":
     # Authentication and Page Selection
     authenticated = is_authenticated()
 
     if not authenticated:
         page = Login()
-    else:
+    else:    
+        # Start the background task only once
+        start_background_task()
+        
         # User authenticated - Choose between Dashboard and Settings
         page_selection = st.sidebar.selectbox("Select Page", ["Dashboard", "Risk Reward", "Settings"])
 

@@ -1,6 +1,6 @@
 import streamlit as st
 
-from libs.data import load_data, save_data
+from libs.risk_reward import load_data, save_data
 
 def RiskReward():
     st.title("Risk Reward")

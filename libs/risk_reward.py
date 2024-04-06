@@ -1,7 +1,7 @@
 import json  # Import json library for file handling
 
 # Define the filename for storing stoploss and target values
-DATA_FILE = "stoploss_target.json"
+DATA_FILE = "risk_reward.json"
 
 
 def load_data():

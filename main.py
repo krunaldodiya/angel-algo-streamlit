@@ -18,12 +18,6 @@ def async_task():
             api_secret="da173a94-6b0f-4dbe-975f-b29156806b96",
             redirect_url="http://127.0.0.1:3333/brokers/angelone/callback",
         )
-
-        session = token_manager.get_session()
-
-        profile = token_manager.http_client.getProfile(refreshToken=session["refreshToken"])
-        
-        print("profile", profile)
     except Exception as e:
         print(e)
 
@@ -36,7 +30,7 @@ def start_background_task():
         thread.start()
         setattr(threading, "background_process_running", True)
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     # Start the background task only once
     start_background_task()
 

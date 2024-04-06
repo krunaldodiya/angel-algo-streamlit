@@ -1,6 +1,6 @@
 import streamlit as st
 
-from libs.data import load_data
+from libs.risk_reward import load_data
 
 def Dashboard():
     st.title("Auto Square Off Algo")

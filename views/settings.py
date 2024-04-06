@@ -1,6 +1,8 @@
 import streamlit as st
 
 from libs.token_manager import validate_token_manager
+
+from libs.firebase import db, auth
     
 def Settings():
     try:
@@ -12,7 +14,7 @@ def Settings():
         api_key = st.text_input(label="API Key", type="default", key="api_key_input")
         api_secret = st.text_input(label="API Secret", type="password", key="api_secret_input")
         redirect_url = st.text_input(label="Redirect URL", type="default", key="redirect_url_input")
-        submit = st.button(label="Authenticate", type="primary", key="login_submit_button")
+        submit = st.button(label="Update", type="primary", key="login_submit_button")
 
         if submit:
             is_valid_api_details = validate_token_manager(
@@ -22,6 +24,17 @@ def Settings():
             if not is_valid_api_details:
                 st.error("Invalid API Details.")
             else:
+                localId = auth.current_user['localId']
+
+                db.child("brokers").child(localId).set({
+                    "client_id":client_id,
+                    "totp_key":totp_key,
+                    "mpin":mpin,
+                    "api_key":api_key,
+                    "api_secret":api_secret,
+                    "redirect_url":redirect_url
+                })
+
                 st.success("Updated Successfully.")
     except Exception as e:
-        st.error("Update failed. Invalid Credentials")
+        st.error("error", e)

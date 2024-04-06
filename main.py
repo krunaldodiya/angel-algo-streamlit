@@ -8,16 +8,27 @@ from views.login import Login
 from views.risk_reward import RiskReward
 from views.settings import Settings
 
+from libs.firebase import auth, db
+
 def async_task():
     try:
-        token_manager = AngelOneTokenManager(
-            client_id="D457786",
-            totp_key="LFVUUZRSIWZNLNSY574LKZOSIY",
-            mpin="6815",
-            api_key="RUVdxvhp",
-            api_secret="da173a94-6b0f-4dbe-975f-b29156806b96",
-            redirect_url="http://127.0.0.1:3333/brokers/angelone/callback",
-        )
+        localId = auth.current_user['localId']
+
+        data = db.child("brokers").child(localId).get().val()
+
+        print(data)
+
+        if data:
+            token_manager = AngelOneTokenManager(
+                client_id=data.get("client_id"),
+                totp_key=data.get("totp_key"),
+                mpin=data.get("mpin"),
+                api_key=data.get("api_key"),
+                api_secret=data.get("api_secret"),
+                redirect_url=data.get("redirect_url"),
+            )
+
+            print(token_manager)
     except Exception as e:
         print(e)
 

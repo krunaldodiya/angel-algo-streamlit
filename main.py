@@ -1,8 +1,6 @@
 import streamlit as st
 import threading
 
-from datetime import datetime
-from time import sleep
 from libs.auth import is_authenticated
 from token_manager.angel_one_token_manager import AngelOneTokenManager
 from views.dashboard import Dashboard
@@ -21,7 +19,10 @@ def async_task():
             redirect_url="http://127.0.0.1:3333/brokers/angelone/callback",
         )
 
-        print(token_manager)
+        http_client = token_manager.get_http_client()
+
+
+        print("http_client". http_client)
     except Exception as e:
         print(e)
 

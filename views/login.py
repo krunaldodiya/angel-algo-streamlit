@@ -1,6 +1,6 @@
 import streamlit as st
 
-from auth import authenticate
+from libs.auth import authenticate
 
 
 def Login():

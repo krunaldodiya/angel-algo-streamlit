@@ -2,7 +2,7 @@ import threading
 
 from datetime import datetime
 from time import sleep
-from auth import is_authenticated
+from libs.auth import is_authenticated
 from views.dashboard import Dashboard
 from views.login import Login
 

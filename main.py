@@ -4,17 +4,24 @@ import threading
 from datetime import datetime
 from time import sleep
 from libs.auth import is_authenticated
+from token_manager.angel_one_token_manager import AngelOneTokenManager
 from views.dashboard import Dashboard
 from views.login import Login
 from views.risk_reward import RiskReward
 from views.settings import Settings
 
 def async_task():
-    while True:
-        # Your square-off logic goes here
-        print("datetime", datetime.now())
-        sleep(1)  # Replace with your desired sleep time
+    try:
+        token_manager = AngelOneTokenManager()
 
+        print(token_manager)
+
+        while True:
+            # Your square-off logic goes here
+            print("datetime", datetime.now())
+            sleep(1)  # Replace with your desired sleep time
+    except Exception as e:
+        print(e)
 
 def start_background_task():
     # Use a global flag to track if the process is already running

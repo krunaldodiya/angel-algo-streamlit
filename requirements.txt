@@ -3,3 +3,5 @@ extra-streamlit-components
 pyrebase4
 smartapi-python
 pyotp
+logzero
+websocket

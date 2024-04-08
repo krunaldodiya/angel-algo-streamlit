@@ -1,14 +1,16 @@
 import streamlit as st
 
+from libs.auth import get_authenticated_user
 from libs.token_manager import validate_token_manager
+from libs.firebase import db
 
-from libs.firebase import auth, db
-    
 def Settings():
     try:
         st.title("Settings")
 
-        localId = auth.current_user['localId']
+        authenticated_user = get_authenticated_user("settings")
+
+        localId = authenticated_user['localId']
 
         data = db.child("brokers").child(localId).get().val()
         

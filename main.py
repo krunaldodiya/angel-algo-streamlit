@@ -20,7 +20,7 @@ def start_background_task(authenticated_user):
 
 if __name__ == "__main__":
     # Authentication and Page Selection
-    authenticated_user = get_authenticated_user()
+    authenticated_user = get_authenticated_user("main")
 
     if not authenticated_user:
         page = Login()

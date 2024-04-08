@@ -50,7 +50,7 @@ class AngelOneTokenManager(BaseTokenManager):
 
     def get_http_client(self) -> SmartConnect:
         try:
-            http_client = SmartConnect(self.api_key)
+            http_client = SmartConnect(self.api_key, timeout=60)
 
             self.session = http_client.generateSession(
                 self.client_id,

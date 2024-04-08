@@ -1,3 +1,4 @@
+from time import sleep
 import streamlit as st
 
 from libs.risk_reward import load_data
@@ -15,3 +16,12 @@ def Dashboard():
     if stoploss is not None and target is not None:
         st.write(f":red[Stoploss: {stoploss}]")
         st.write(f":green[Target: {target}]")
+
+    if 'pnl' not in st.session_state:
+        st.session_state['pnl'] = None
+
+    pnl_text = st.empty()
+
+    while True:
+        pnl_text.text = st.session_state['pnl']
+        sleep(1)

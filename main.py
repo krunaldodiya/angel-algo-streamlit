@@ -8,15 +8,19 @@ from views.login import Login
 from views.risk_reward import RiskReward
 from views.settings import Settings
 
+from streamlit.runtime.scriptrunner import add_script_run_ctx
 
-def start_background_task(authenticated_user):
+pnl_text = st.empty()
+
+def start_background_task(authenticated_user, session_state):
     # Use a global flag to track if the process is already running
     if not getattr(threading, "background_process_running", False):
         print("starting...")
-        thread = threading.Thread(target=background_task, args=(authenticated_user,))
-        thread.daemon = True
+        thread = threading.Thread(target=background_task, args=(authenticated_user, session_state))
+        add_script_run_ctx(thread)
         thread.start()
         setattr(threading, "background_process_running", True)
+        print("started...")
 
 if __name__ == "__main__":
     # Authentication and Page Selection
@@ -24,11 +28,9 @@ if __name__ == "__main__":
 
     if not authenticated_user:
         page = Login()
-    else:
+    else:   
         # Start the background task only once
-        start_background_task(authenticated_user)
-
-        st.session_state
+        start_background_task(authenticated_user, st.session_state)
 
         with st.sidebar:
             process_logout = st.button(

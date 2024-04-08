@@ -1,7 +1,7 @@
 from time import sleep
 from libs.token_manager import get_token_manager
 
-def background_task(authenticated_user):
+def background_task(authenticated_user, session_state):
     ticks = {}
 
     tokens = []
@@ -43,12 +43,9 @@ def background_task(authenticated_user):
 
         def on_data(wsapp, data):
             ltp = round(data['last_traded_price'] / 100, 2)
-            
             ticks[data['token']]['ltp'] = ltp
-
             overall_pnl = sum(calculate_position_pnl(tick) for tick in ticks.values())
-
-            print("overall_pnl", round(overall_pnl, 2))
+            session_state['pnl'] = round(overall_pnl, 2)
 
         def on_open(wsapp):
             correlation_id = "abc123"

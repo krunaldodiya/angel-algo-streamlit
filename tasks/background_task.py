@@ -26,24 +26,29 @@ def background_task(authenticated_user):
 
             ticks[item['symboltoken']] = {
                 'tradingsymbol': item['tradingsymbol'], 
-                "avgnetprice": item['avgnetprice'], 
-                "netqty": item['netqty'], 
-                'ltp': item['ltp']
+                "avgnetprice": float(item['avgnetprice']), 
+                "netqty": int(item['netqty']), 
+                'ltp': float(item['ltp'])
             }
 
         sws = token_manager.get_ws_client()
+
+        def calculate_position_pnl(tick):
+            pnl =  tick['ltp'] - tick['avgnetprice'] if tick['netqty'] > 0 else tick['avgnetprice'] - tick['ltp']
+
+            return pnl * abs(tick['netqty'])
 
         def on_error(wsapp, error):
             print("error", error)
 
         def on_data(wsapp, data):
             ltp = round(data['last_traded_price'] / 100, 2)
+            
             ticks[data['token']]['ltp'] = ltp
-            pnl = sum(float(tick.get('ltp', 0)) for tick in ticks.values())
 
-            print(ticks)
+            overall_pnl = sum(calculate_position_pnl(tick) for tick in ticks.values())
 
-            print("pnl", pnl)
+            print("overall_pnl", round(overall_pnl, 2))
 
         def on_open(wsapp):
             correlation_id = "abc123"

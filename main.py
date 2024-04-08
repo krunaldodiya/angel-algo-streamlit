@@ -1,7 +1,7 @@
 import streamlit as st
 import threading
 
-from libs.auth import get_authenticated_user
+from libs.auth import get_authenticated_user, logout
 from token_manager.angel_one_token_manager import AngelOneTokenManager
 from views.dashboard import Dashboard
 from views.login import Login
@@ -57,6 +57,15 @@ if __name__ == "__main__":
     else:
         # Start the background task only once
         start_background_task(authenticated_user)
+
+        with st.sidebar:
+            process_logout = st.button(
+                "Logout",
+                type="primary"
+            )
+
+            if process_logout:
+                logout()
         
         # User authenticated - Choose between Dashboard and Settings
         page_selection = st.sidebar.selectbox("Select Page", ["Dashboard", "Risk Reward", "Settings"])

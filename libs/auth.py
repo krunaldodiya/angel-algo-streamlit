@@ -4,6 +4,9 @@ from libs.firebase import auth
 
 local_storage = LocalStorage()
 
+def logout():
+  local_storage.deleteItem("auth")
+
 def get_authenticated_user():
   data = local_storage.getItem("auth")
 

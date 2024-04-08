@@ -9,6 +9,7 @@ def background_task(authenticated_user):
         if not token_manager:
             print("Failed to fetch broker details")
         else:
-            print(token_manager)
+            profile = token_manager.http_client.getProfile(refreshToken=token_manager.session['data']['refreshToken'])
+            print("profile", profile)
     except Exception as e:
         print("async_task", e)

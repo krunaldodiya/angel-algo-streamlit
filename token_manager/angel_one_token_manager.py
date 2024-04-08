@@ -26,6 +26,8 @@ class AngelOneTokenManager(BaseTokenManager):
         self.api_secret = api_secret
         self.redirect_url = redirect_url
 
+        self.session = None
+
         self.http_client = self.get_http_client()
 
         self.set_access_token_file_name(
@@ -50,25 +52,20 @@ class AngelOneTokenManager(BaseTokenManager):
         try:
             http_client = SmartConnect(self.api_key)
 
+            self.session = http_client.generateSession(
+                self.client_id,
+                self.mpin,
+                self.get_totp(self.totp_key),
+            )
+
             return http_client
         except Exception as e:
             print(e)
 
-    def get_session(self) -> Any:
-        session = self.http_client.generateSession(
-            self.client_id,
-            self.mpin,
-            self.get_totp(self.totp_key),
-        )
-
-        return session["data"]
-
     def get_ws_client(self) -> SmartWebSocketV2:
         try:
-            session = self.get_session()
-
             ws_client = SmartWebSocketV2(
-                session["jwtToken"],
+                self.session['data']["jwtToken"],
                 self.api_key,
                 self.client_id,
                 self.http_client.getfeedToken(),

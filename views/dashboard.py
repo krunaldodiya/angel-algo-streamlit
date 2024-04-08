@@ -14,8 +14,8 @@ def Dashboard():
 
     # Display current stoploss and target values (optional)
     if stoploss is not None and target is not None:
-        st.write(f":red[Stoploss: {stoploss}]")
-        st.write(f":green[Target: {target}]")
+        st.write(f":{'red':<30}[Stoploss: {stoploss}]")
+        st.write(f":{'green':<30}[Target: {target}]")
 
     if 'pnl' not in st.session_state:
         st.session_state['pnl'] = 0
@@ -23,5 +23,5 @@ def Dashboard():
     pnl_text = st.empty()
 
     while True:
-        pnl_text.text(st.session_state['pnl'])
+        pnl_text.text(f"PNL: {st.session_state['pnl']}")
         sleep(1)

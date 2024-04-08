@@ -26,9 +26,9 @@ def Dashboard():
         pnl = st.session_state['pnl']
 
         if pnl < 0:
-            pnl_text.write(f":red[P&L: -{pnl}]")
+            pnl_text.write(f":red[P&L: {pnl}]")
         elif pnl > 0:
-            pnl_text.write(f":green[P&L: +{pnl}]")
+            pnl_text.write(f":green[P&L: {pnl}]")
         else:
             pnl_text.write(f":black[P&L: {pnl}]")
         

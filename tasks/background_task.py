@@ -11,7 +11,7 @@ def background_task(authenticated_user):
 
         token_manager = get_token_manager(localId=localId)
 
-        if not token_manager:
+        if not token_manager.http_client:
             print("Failed to fetch broker details")
             return
         
@@ -23,7 +23,13 @@ def background_task(authenticated_user):
         
         for item in position['data']:
             tokens.append(item['symboltoken'])
-            ticks[item['symboltoken']] = {'tradingsymbol': item['tradingsymbol'], 'ltp': item['ltp']}
+
+            ticks[item['symboltoken']] = {
+                'tradingsymbol': item['tradingsymbol'], 
+                "avgnetprice": item['avgnetprice'], 
+                "netqty": item['netqty'], 
+                'ltp': item['ltp']
+            }
 
         sws = token_manager.get_ws_client()
 

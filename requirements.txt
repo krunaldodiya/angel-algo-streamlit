@@ -1,5 +1,5 @@
 streamlit
-extra-streamlit-components
+streamlit-local-storage
 pyrebase4
 smartapi-python
 pyotp

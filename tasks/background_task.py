@@ -35,6 +35,8 @@ def background_task(authenticated_user):
             ticks[data['token']]['ltp'] = ltp
             pnl = sum(float(tick.get('ltp', 0)) for tick in ticks.values())
 
+            print(ticks)
+
             print("pnl", pnl)
 
         def on_open(wsapp):

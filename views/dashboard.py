@@ -18,10 +18,10 @@ def Dashboard():
         st.write(f":green[Target: {target}]")
 
     if 'pnl' not in st.session_state:
-        st.session_state['pnl'] = None
+        st.session_state['pnl'] = 0
 
     pnl_text = st.empty()
 
     while True:
-        pnl_text.text = st.session_state['pnl']
+        pnl_text.text(st.session_state['pnl'])
         sleep(1)

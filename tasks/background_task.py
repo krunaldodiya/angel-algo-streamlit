@@ -1,6 +1,11 @@
+from time import sleep
 from libs.token_manager import get_token_manager
 
 def background_task(authenticated_user):
+    ticks = {}
+
+    tokens = []
+
     try:
         localId = authenticated_user['localId']
 
@@ -15,12 +20,18 @@ def background_task(authenticated_user):
         if not position:
             print("No Positions")
             return
+        
+        for item in position['data']:
+            tokens.append(item['symboltoken'])
+            ticks[item['symboltoken']] = {'tradingsymbol': item['tradingsymbol'], 'ltp': item['ltp']}
 
         sws = token_manager.get_ws_client()
 
         def on_data(wsapp, data):
             ltp = round(data['last_traded_price'] / 100, 2)
-            print(ltp)
+            ticks[data['token']]['ltp'] = ltp
+
+            print(ticks)
 
         def on_open(wsapp):
             correlation_id = "abc123"
@@ -28,7 +39,7 @@ def background_task(authenticated_user):
             token_list = [
                 {
                     "exchangeType": 2,
-                    "tokens": [item['symboltoken'] for item in position['data']]
+                    "tokens": tokens
                 }
             ]
 

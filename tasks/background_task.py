@@ -12,4 +12,4 @@ def background_task(authenticated_user):
             profile = token_manager.http_client.getProfile(refreshToken=token_manager.session["data"]["refreshToken"])
             print("profile", profile)
     except Exception as e:
-        print("async_task", e)
+        print("background_task", e)

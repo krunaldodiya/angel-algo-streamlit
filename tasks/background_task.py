@@ -27,11 +27,15 @@ def background_task(authenticated_user):
 
         sws = token_manager.get_ws_client()
 
+        def on_error(wsapp, error):
+            print("error", error)
+
         def on_data(wsapp, data):
             ltp = round(data['last_traded_price'] / 100, 2)
             ticks[data['token']]['ltp'] = ltp
+            pnl = sum(float(tick.get('ltp', 0)) for tick in ticks.values())
 
-            print(ticks)
+            print("pnl", pnl)
 
         def on_open(wsapp):
             correlation_id = "abc123"
@@ -47,6 +51,7 @@ def background_task(authenticated_user):
 
         sws.on_open = on_open
         sws.on_data = on_data
+        sws.on_error = on_error
 
         sws.connect()
     except Exception as e:

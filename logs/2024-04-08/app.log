@@ -9,3 +9,13 @@
 [E 240408 11:11:12 smartWebSocketV2:304] Error occurred during WebSocket connection: module 'websocket' has no attribute 'WebSocketApp'
 [E 240408 11:13:19 smartWebSocketV2:304] Error occurred during WebSocket connection: module 'websocket' has no attribute 'WebSocketApp'
 [E 240408 11:49:42 smartConnect:219] Error occurred while making a POST request to https://apiconnect.angelbroking.com/rest/auth/angelbroking/user/v1/loginByPassword. Headers: {'Content-type': 'application/json', 'X-ClientLocalIP': '127.0.0.1', 'X-ClientPublicIP': '106.193.147.98', 'X-MACAddress': '75:b6:6f:ea:5b:f4', 'Accept': 'application/json', 'X-PrivateKey': 'RkN9JKsy', 'X-UserType': 'USER', 'X-SourceID': 'WEB'}, Request: {'clientcode': 'A322172', 'password': '1307', 'totp': '542743'}, Response: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+[W 240408 12:04:46 smartWebSocketV2:319] Attempting to resubscribe/reconnect (Attempt 1)...
+[W 240408 12:04:58 smartWebSocketV2:319] Attempting to resubscribe/reconnect (Attempt 1)...
+[W 240408 12:05:17 smartWebSocketV2:319] Attempting to resubscribe/reconnect (Attempt 1)...
+[E 240408 12:05:27 smartWebSocketV2:304] Error occurred during WebSocket connection: SmartWebSocketV2.on_error() takes 1 positional argument but 3 were given
+[E 240408 12:05:27 smartWebSocketV2:333] Error occurred during resubscribe/reconnect: SmartWebSocketV2.on_error() takes 1 positional argument but 3 were given
+[E 240408 12:05:27 smartWebSocketV2:304] Error occurred during WebSocket connection: SmartWebSocketV2.on_error() takes 1 positional argument but 3 were given
+[W 240408 12:06:33 smartWebSocketV2:319] Attempting to resubscribe/reconnect (Attempt 1)...
+[W 240408 12:06:44 smartWebSocketV2:343] Connection closed due to max retry attempts reached.
+[W 240408 12:06:44 smartWebSocketV2:343] Connection closed due to max retry attempts reached.
+[W 240408 12:06:44 smartWebSocketV2:343] Connection closed due to max retry attempts reached.

@@ -28,6 +28,8 @@ if __name__ == "__main__":
         # Start the background task only once
         start_background_task(authenticated_user)
 
+        st.session_state
+
         with st.sidebar:
             process_logout = st.button(
                 "Logout",

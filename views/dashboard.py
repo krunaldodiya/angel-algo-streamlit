@@ -1,22 +1,9 @@
 import streamlit as st
 
-import threading
-
 from libs.auth import get_authenticated_user
-from tasks.background_task import background_task
-from streamlit.runtime.scriptrunner import add_script_run_ctx
+from tasks.background_task import BackgroundTask
 from time import sleep
 from libs.risk_reward import load_data
-
-def run_thread(authenticated_user, session_state):
-    # Use a global flag to track if the process is already running
-    if not getattr(threading, "background_process_running", False):
-        print("starting...")
-        thread = threading.Thread(target=background_task, args=(authenticated_user, session_state))
-        add_script_run_ctx(thread)
-        thread.start()
-        setattr(threading, "background_process_running", True)
-        print("started...")
 
 def Dashboard():
     st.title("Auto Square Off Algo")
@@ -24,10 +11,12 @@ def Dashboard():
 
     authenticated_user = get_authenticated_user("dashboard")
 
+    background_task = BackgroundTask(authenticated_user, st.session_state)
+
     thread_button = st.button("Start")
 
     if thread_button:
-        run_thread(authenticated_user, st.session_state)
+        background_task.run_thread()
 
     # Load existing values from JSON (or set defaults)
     data = load_data()

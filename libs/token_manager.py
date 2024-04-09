@@ -15,22 +15,11 @@ def get_token_manager(localId):
             api_secret = data.get("api_secret")
             redirect_url = data.get("redirect_url")
 
-            validate = validate_token_manager(client_id, totp_key, mpin, api_key, api_secret, redirect_url)
-
-            if not validate:
-                return None
-        
-            return AngelOneTokenManager(
-                client_id=client_id,
-                totp_key=totp_key,
-                mpin=mpin,
-                api_key=api_key,
-                api_secret=api_secret,
-                redirect_url=redirect_url,
-            )
+            return validate_token_manager(client_id, totp_key, mpin, api_key, api_secret, redirect_url)
     except Exception as e:
+        print("get_token_manager", e)
         return None
-    
+
 def validate_token_manager(client_id, totp_key, mpin, api_key, api_secret, redirect_url):
     try:
         token_manager = AngelOneTokenManager(
@@ -42,13 +31,12 @@ def validate_token_manager(client_id, totp_key, mpin, api_key, api_secret, redir
             redirect_url=redirect_url,
         )
 
-        print("token_manager", token_manager)
-
         profile = token_manager.http_client.getProfile(refreshToken=token_manager.session["data"]["refreshToken"])
 
         if profile['status']:
-            return True
+            return token_manager
         else:
-            return False
+            return None
     except Exception as e:
-        return False
+        print("validate_token_manager", e)
+        return None

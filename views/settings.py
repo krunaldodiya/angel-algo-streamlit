@@ -38,11 +38,11 @@ def Settings():
         submit = st.button(label="Update", type="primary", key="login_submit_button")
 
         if submit:
-            is_valid_api_details = validate_token_manager(
+            token_manager = validate_token_manager(
                 client_id, totp_key, mpin, api_key, api_secret, redirect_url
             )
 
-            if not is_valid_api_details:
+            if not token_manager:
                 st.error("Invalid API Details.")
             else:
                 db.child("brokers").child(localId).set({

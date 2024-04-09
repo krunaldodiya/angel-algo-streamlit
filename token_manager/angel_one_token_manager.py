@@ -36,7 +36,6 @@ class AngelOneTokenManager(BaseTokenManager):
 
         self.initialize()
 
-
     def get_totp(self, totp_key):
         return pyotp.TOTP(totp_key).now()
 
@@ -44,8 +43,7 @@ class AngelOneTokenManager(BaseTokenManager):
         self.token = token
 
     def get_token(self) -> str:
-        session = self.get_session()
-        token: str = session["jwtToken"]
+        token: str = self.session["data"]["jwtToken"]
         return token
 
     def get_http_client(self) -> SmartConnect:

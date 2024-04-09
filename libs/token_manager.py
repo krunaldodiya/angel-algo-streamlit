@@ -42,6 +42,8 @@ def validate_token_manager(client_id, totp_key, mpin, api_key, api_secret, redir
             redirect_url=redirect_url,
         )
 
+        print("token_manager", token_manager)
+
         profile = token_manager.http_client.getProfile(refreshToken=token_manager.session["data"]["refreshToken"])
 
         if profile['status']:

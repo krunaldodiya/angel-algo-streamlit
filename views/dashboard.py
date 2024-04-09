@@ -9,13 +9,15 @@ def Dashboard():
     st.title("Auto Square Off Algo")
     st.write("This tool will auto square off based on MTM")
 
-    authenticated_user = get_authenticated_user("dashboard")
+    if 'pnl' not in st.session_state:
+        st.session_state['pnl'] = 0
 
-    background_task = BackgroundTask(authenticated_user, st.session_state)
+    authenticated_user = get_authenticated_user("dashboard")
 
     thread_button = st.button("Start")
 
     if thread_button:
+        background_task = BackgroundTask(authenticated_user, st.session_state)
         background_task.run_thread()
 
     # Load existing values from JSON (or set defaults)
@@ -27,9 +29,6 @@ def Dashboard():
     if stoploss is not None and target is not None:
         st.write(f":red[SL: {stoploss}]")
         st.write(f":green[TGT: {target}]")
-
-    if 'pnl' not in st.session_state:
-        st.session_state['pnl'] = 0
 
     pnl_text = st.empty()
 

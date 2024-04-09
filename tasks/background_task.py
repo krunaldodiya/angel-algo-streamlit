@@ -18,8 +18,6 @@ class BackgroundTask:
             thread = threading.Thread(target=self.background_task)
             add_script_run_ctx(thread)
             thread.start()
-            setattr(threading, "background_process_running", True)
-            print("started...")
 
     def background_task(self):
         try:
@@ -70,7 +68,10 @@ class BackgroundTask:
                 self.session_state['pnl'] = round(overall_pnl, 2)
 
             def on_open(wsapp):
+                setattr(threading, "background_process_running", True)
+                print("started...")
                 sws.subscribe(correlation_id, mode, token_list)
+                print("subscribed...")
 
             sws.on_open = on_open
             sws.on_data = on_data

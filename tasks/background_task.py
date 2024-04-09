@@ -1,7 +1,8 @@
 import threading
+from time import sleep
 
 from libs.token_manager import get_token_manager
-from streamlit.runtime.scriptrunner import add_script_run_ctx
+from streamlit.runtime.scriptrunner import add_script_run_ctx, get_script_run_ctx
 
 class BackgroundTask:
     def __init__(self, authenticated_user, session_state) -> None:
@@ -15,25 +16,27 @@ class BackgroundTask:
         self.mode = 1
         self.tokens = []
 
+        self.thread = None
+        self.token_manager = None
+        self.sws = None
+
     def start_task(self):
-        if not getattr(threading, "background_process_running", False):
-            print("starting...")
-            thread = threading.Thread(target=self.background_task)
-            add_script_run_ctx(thread)
-            thread.start()
+        threads = [thread for thread in threading.enumerate() if thread.name == "background_task"]
+
+        if threads:
+            self.thread = threads[0]
+        else:
+            self.thread = threading.Thread(target=self.background_task, name="background_task")
+            add_script_run_ctx(self.thread)
+            self.thread.start()
 
     def stop_task(self):
-        if not getattr(threading, "background_process_running", True):
-            print("stopping...")
+        if self.sws:
             self.sws.close_connection()
-            setattr(threading, "background_process_running", False)
-            print("stopped...")
 
     def background_task(self):
         try:
             self.token_manager = get_token_manager(localId=self.localId)
-
-            self.sws = self.token_manager.get_ws_client()
 
             position = self.token_manager.http_client.position()
 
@@ -73,10 +76,9 @@ class BackgroundTask:
                 self.session_state['pnl'] = round(overall_pnl, 2)
 
             def on_open(wsapp):
-                setattr(threading, "background_process_running", True)
-                print("started...")
                 self.sws.subscribe(self.correlation_id, self.mode, token_list)
-                print("subscribed...")
+
+            self.sws = self.token_manager.get_ws_client()
 
             self.sws.on_open = on_open
             self.sws.on_data = on_data

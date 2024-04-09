@@ -17,8 +17,9 @@ def Dashboard():
     start_button = st.button("Start")
     stop_button = st.button("Stop")
 
+    background_task = BackgroundTask(authenticated_user, st.session_state)
+
     if start_button:
-        background_task = BackgroundTask(authenticated_user, st.session_state)
         background_task.start_task()
 
     if stop_button:

@@ -14,11 +14,15 @@ def Dashboard():
 
     authenticated_user = get_authenticated_user("dashboard")
 
-    thread_button = st.button("Start")
+    start_button = st.button("Start")
+    stop_button = st.button("Stop")
 
-    if thread_button:
+    if start_button:
         background_task = BackgroundTask(authenticated_user, st.session_state)
-        background_task.run_thread()
+        background_task.start_task()
+
+    if stop_button:
+        background_task.stop_task()
 
     # Load existing values from JSON (or set defaults)
     data = load_data()

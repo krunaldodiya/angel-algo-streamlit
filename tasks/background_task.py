@@ -9,74 +9,80 @@ class BackgroundTask:
         self.authenticated_user = authenticated_user
         self.session_state = session_state
         self.localId = authenticated_user['localId']
+
         self.ticks = {}
+
+        self.correlation_id = "abc123"
+        self.mode = 1
         self.tokens = []
 
-    def run_thread(self):
+    def start_task(self):
         if not getattr(threading, "background_process_running", False):
             print("starting...")
             thread = threading.Thread(target=self.background_task)
             add_script_run_ctx(thread)
             thread.start()
 
+    def stop_task(self):
+        if not getattr(threading, "background_process_running", True):
+            print("stopping...")
+            self.sws.close_connection()
+            setattr(threading, "background_process_running", False)
+            print("stopped...")
+
     def background_task(self):
         try:
-            token_manager = get_token_manager(localId=self.localId)
+            self.token_manager = get_token_manager(localId=self.localId)
 
-            # position = token_manager.http_client.position()
+            self.sws = self.token_manager.get_ws_client()
 
-            # while True:
-            #     if position:
-            #         break
-            #     else:
-            #         print("No Positions yet")
-            #         sleep(1)
+            position = self.token_manager.http_client.position()
 
-            # for item in position['data']:
-            #     self.tokens.append(item['symboltoken'])
+            if not position['data']:
+                print("No Positions.")
+                return
 
-            #     self.ticks[item['symboltoken']] = {
-            #         'tradingsymbol': item['tradingsymbol'], 
-            #         "avgnetprice": float(item['avgnetprice']), 
-            #         "netqty": int(item['netqty']), 
-            #         'ltp': float(item['ltp'])
-            #     }
-            
-            # correlation_id = "abc123"
-            # mode = 1
-            # token_list = [
-            #     {
-            #         "exchangeType": 2,
-            #         "tokens": self.tokens
-            #     }
-            # ]
+            for item in position['data']:
+                self.tokens.append(item['symboltoken'])
 
-            # sws = token_manager.get_ws_client()
+                self.ticks[item['symboltoken']] = {
+                    'tradingsymbol': item['tradingsymbol'], 
+                    "avgnetprice": float(item['avgnetprice']), 
+                    "netqty": int(item['netqty']), 
+                    'ltp': float(item['ltp'])
+                }
 
-            # def calculate_position_pnl(tick):
-            #     pnl =  tick['ltp'] - tick['avgnetprice'] if tick['netqty'] > 0 else tick['avgnetprice'] - tick['ltp']
+            token_list = [
+                {
+                    "exchangeType": 2,
+                    "tokens": self.tokens
+                }
+            ]
 
-            #     return pnl * abs(tick['netqty'])
+            def calculate_position_pnl(tick):
+                pnl =  tick['ltp'] - tick['avgnetprice'] if tick['netqty'] > 0 else tick['avgnetprice'] - tick['ltp']
 
-            # def on_error(wsapp, error):
-            #     print("error", error)
+                return pnl * abs(tick['netqty'])
 
-            # def on_data(wsapp, data):
-            #     ltp = round(data['last_traded_price'] / 100, 2)
-            #     self.ticks[data['token']]['ltp'] = ltp
-            #     overall_pnl = sum(calculate_position_pnl(tick) for tick in self.ticks.values())
-            #     self.session_state['pnl'] = round(overall_pnl, 2)
+            def on_error(wsapp, error):
+                print("error", error)
 
-            # def on_open(wsapp):
-            #     setattr(threading, "background_process_running", True)
-            #     print("started...")
-            #     sws.subscribe(correlation_id, mode, token_list)
-            #     print("subscribed...")
+            def on_data(wsapp, data):
+                ltp = round(data['last_traded_price'] / 100, 2)
+                self.ticks[data['token']]['ltp'] = ltp
+                overall_pnl = sum(calculate_position_pnl(tick) for tick in self.ticks.values())
+                self.session_state['pnl'] = round(overall_pnl, 2)
 
-            # sws.on_open = on_open
-            # sws.on_data = on_data
-            # sws.on_error = on_error
+            def on_open(wsapp):
+                setattr(threading, "background_process_running", True)
+                print("started...")
+                self.sws.subscribe(self.correlation_id, self.mode, token_list)
+                print("subscribed...")
 
-            # sws.connect()
+            self.sws.on_open = on_open
+            self.sws.on_data = on_data
+            self.sws.on_error = on_error
+
+            self.sws.connect()
         except Exception as e:
             print("background_task", e)

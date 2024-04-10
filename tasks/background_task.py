@@ -16,19 +16,25 @@ class BackgroundTask:
         self.mode = 1
         self.tokens = []
 
-        self.thread = None
+        self.thread = self.get_thread()
         self.token_manager = None
         self.sws = None
 
-    def start_task(self):
+    def get_thread(self):
         threads = [thread for thread in threading.enumerate() if thread.name == "background_task"]
 
         if threads:
-            self.thread = threads[0]
+            return threads[0]
         else:
+            return None
+
+    def start_task(self):
+        if not self.thread:
             self.thread = threading.Thread(target=self.background_task, name="background_task")
-            add_script_run_ctx(self.thread)
-            self.thread.start()
+    
+        add_script_run_ctx(self.thread)
+
+        self.thread.start()
 
     def stop_task(self):
         if self.sws:

@@ -5,9 +5,9 @@ from libs.token_manager import get_token_manager
 from streamlit.runtime.scriptrunner import add_script_run_ctx, get_script_run_ctx
 
 class BackgroundTask:
-    def __init__(self, authenticated_user, session_state) -> None:
+    def __init__(self, authenticated_user, on_updates) -> None:
         self.authenticated_user = authenticated_user
-        self.session_state = session_state
+        self.on_updates = on_updates
         self.localId = authenticated_user['localId']
 
         self.ticks = {}
@@ -47,8 +47,7 @@ class BackgroundTask:
             position = self.token_manager.http_client.position()
 
             if not position['data']:
-                print("No Positions.")
-                return
+                return self.on_updates({'error': 'No Positions.'})
 
             for item in position['data']:
                 self.tokens.append(item['symboltoken'])
@@ -79,7 +78,7 @@ class BackgroundTask:
                 ltp = round(data['last_traded_price'] / 100, 2)
                 self.ticks[data['token']]['ltp'] = ltp
                 overall_pnl = sum(calculate_position_pnl(tick) for tick in self.ticks.values())
-                self.session_state['pnl'] = round(overall_pnl, 2)
+                self.on_updates({'pnl': round(overall_pnl, 2)})
 
             def on_open(wsapp):
                 self.sws.subscribe(self.correlation_id, self.mode, token_list)
@@ -92,4 +91,4 @@ class BackgroundTask:
 
             self.sws.connect()
         except Exception as e:
-            print("background_task", e)
+            self.on_updates({'error': str(e)})

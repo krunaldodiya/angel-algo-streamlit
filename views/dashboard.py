@@ -9,6 +9,9 @@ def Dashboard():
     st.title("Auto Square Off Algo")
     st.write("This tool will auto square off based on MTM")
 
+    pnl_text = st.empty()
+    error_text = st.empty()
+
     if 'pnl' not in st.session_state:
         st.session_state['pnl'] = 0
 
@@ -17,7 +20,14 @@ def Dashboard():
     start_button = st.button("Start", key="start_button")
     stop_button = st.button("Stop", key="stop_button")
 
-    background_task = BackgroundTask(authenticated_user, st.session_state)
+    def on_updates(data):
+        if 'error' in data:
+            error_text.warning(data['error'])
+
+        if 'pnl' in data:
+            st.session_state['pnl'] = data['pnl']
+
+    background_task = BackgroundTask(authenticated_user, on_updates)
 
     if start_button:
         background_task.start_task()
@@ -34,8 +44,6 @@ def Dashboard():
     if stoploss is not None and target is not None:
         st.write(f":red[SL: {stoploss}]")
         st.write(f":green[TGT: {target}]")
-
-    pnl_text = st.empty()
 
     while True:
         pnl = st.session_state['pnl']

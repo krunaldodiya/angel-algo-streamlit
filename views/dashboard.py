@@ -9,7 +9,6 @@ def Dashboard():
     st.title("Auto Square Off Algo")
     st.write("This tool will auto square off based on MTM")
 
-    pnl_text = st.empty()
     error_text = st.empty()
 
     if 'pnl' not in st.session_state:
@@ -44,6 +43,8 @@ def Dashboard():
     if stoploss is not None and target is not None:
         st.write(f":red[SL: {stoploss}]")
         st.write(f":green[TGT: {target}]")
+
+    pnl_text = st.empty()
 
     while True:
         pnl = st.session_state['pnl']

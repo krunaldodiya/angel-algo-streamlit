@@ -1,6 +1,7 @@
 import threading
 from time import sleep
 
+from libs.risk_reward import load_data
 from libs.token_manager import get_token_manager
 from streamlit.runtime.scriptrunner import add_script_run_ctx, get_script_run_ctx
 
@@ -19,6 +20,11 @@ class BackgroundTask:
         self.thread = self.get_thread()
         self.token_manager = None
         self.sws = None
+
+        data = load_data()
+
+        self.stoploss = data.get("stoploss")
+        self.target = data.get("target")
 
     def get_thread(self):
         threads = [thread for thread in threading.enumerate() if thread.name == "background_task"]
@@ -39,6 +45,9 @@ class BackgroundTask:
     def stop_task(self):
         if self.sws:
             self.sws.close_connection()
+
+    def exit_positions(self, message):
+        print(message)
 
     def background_task(self):
         try:
@@ -79,6 +88,16 @@ class BackgroundTask:
                 self.ticks[data['token']]['ltp'] = ltp
                 overall_pnl = sum(calculate_position_pnl(tick) for tick in self.ticks.values())
                 self.on_updates({'pnl': round(overall_pnl, 2)})
+
+                if overall_pnl <= -self.stoploss:
+                    self.exit_positions("stoploss hit")
+                elif overall_pnl >= self.target:
+                    self.exit_positions("target hit")
+                else:
+                    print("overall_pnl", overall_pnl)
+                    print("stoploss", self.stoploss)
+                    print("target", self.target)
+                    print("\n")
 
             def on_open(wsapp):
                 self.sws.subscribe(self.correlation_id, self.mode, token_list)

@@ -6,3 +6,4 @@ pyotp
 logzero
 websocket
 websocket-client
+python-dotenv

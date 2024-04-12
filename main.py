@@ -1,10 +1,14 @@
 import streamlit as st
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from libs.auth import get_authenticated_user, logout
 from views.dashboard import Dashboard
 from views.login import Login
 from views.risk_reward import RiskReward
 from views.settings import Settings
-
 
 if __name__ == "__main__":
     # Authentication and Page Selection

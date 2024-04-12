@@ -1,10 +1,11 @@
+import os
 import pyrebase
 
 config = {
-  "apiKey": "AIzaSyACnXQ-QV1tmBvCLKFvbRaOhEITUYcciA4",
-  "authDomain": "angelalgo-5029f.firebaseapp.com",
-  "databaseURL": "https://angelalgo-5029f-default-rtdb.firebaseio.com",
-  "storageBucket": "angelalgo-5029f.appspot.com"
+  "apiKey": os.getenv("API_KEY"),
+  "authDomain": os.getenv("AUTH_DOMAIN"),
+  "databaseURL": os.getenv("DATABASE_URL"),
+  "storageBucket": os.getenv("STORAGE_BUCKET"),
 }
 
 firebase = pyrebase.initialize_app(config)

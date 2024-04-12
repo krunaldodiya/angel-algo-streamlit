@@ -26,10 +26,10 @@ def Dashboard():
         if 'pnl' in data:
             st.session_state['pnl'] = data['pnl']
 
-    background_task = BackgroundTask(authenticated_user, on_updates)
+    background_task = BackgroundTask()
 
     if start_button:
-        background_task.start_task()
+        background_task.start_task(authenticated_user['localId'], on_updates)
 
     if stop_button:
         background_task.stop_task()

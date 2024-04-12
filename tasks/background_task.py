@@ -1,41 +1,17 @@
 import threading
 
+from libs.get_running_thread import get_thread
 from libs.risk_reward import load_data
 from libs.token_manager import get_token_manager
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 class BackgroundTask:
-    def __init__(self, authenticated_user, on_updates) -> None:
-        self.authenticated_user = authenticated_user
-        self.on_updates = on_updates
-        self.localId = authenticated_user['localId']
+    def __init__(self) -> None:
+        self.thread = get_thread()
 
-        self.correlation_id = "abc123"
-        self.mode = 1
-        self.tokens = {}
-
-        self.thread = self.get_thread()
-        self.token_manager = None
-        self.sws = None
-
-        data = load_data()
-
-        self.stoploss = data.get("stoploss")
-        self.target = data.get("target")
-
-        self.positions = []
-
-    def get_thread(self):
-        threads = [thread for thread in threading.enumerate() if thread.name == "background_task"]
-
-        if threads:
-            return threads[0]
-        else:
-            return None
-
-    def start_task(self):
+    def start_task(self, localId, on_updates):
         if not self.thread:
-            self.thread = threading.Thread(target=self.background_task, name="background_task")
+            self.thread = threading.Thread(target=self.background_task, args=(localId, on_updates), name="background_task")
     
         add_script_run_ctx(self.thread)
 
@@ -48,8 +24,25 @@ class BackgroundTask:
     def exit_positions(self, message):
         print(message)
 
-    def background_task(self):
+    def background_task(self, localId, on_updates):
         try:
+            self.localId = localId
+            self.on_updates = on_updates
+                
+            self.correlation_id = "abc123"
+            self.mode = 1
+            self.tokens = {}
+
+            self.token_manager = None
+            self.sws = None
+
+            data = load_data()
+
+            self.stoploss = data.get("stoploss")
+            self.target = data.get("target")
+
+            self.positions = []
+
             self.token_manager = get_token_manager(localId=self.localId)
 
             position_query = self.token_manager.http_client.position()
@@ -92,8 +85,11 @@ class BackgroundTask:
 
         def on_data(wsapp, data):
             ltp = round(data['last_traded_price'] / 100, 2)
+            
             self.tokens[data['token']]['ltp'] = ltp
+            
             overall_pnl = sum(calculate_position_pnl(tick) for tick in self.tokens.values())
+
             self.on_updates({'pnl': round(overall_pnl, 2)})
 
             if overall_pnl <= -self.stoploss:

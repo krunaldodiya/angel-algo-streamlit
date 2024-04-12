@@ -28,6 +28,8 @@ if __name__ == "__main__":
 
             if process_logout:
                 logout()
+                st.session_state["authenticated_user"] = None
+                st.rerun()
         
         # User authenticated - Choose between Dashboard and Settings
         page_selection = st.sidebar.selectbox("Select Page", ["Dashboard", "Risk Reward", "Settings"])

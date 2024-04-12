@@ -1,6 +1,6 @@
 import streamlit as st
 
-from libs.auth import authenticate
+from libs.authenticate import authenticate
 
 
 def Login():
@@ -16,7 +16,6 @@ def Login():
 
             if authenticated_user:
                 st.session_state["authenticated_user"] = authenticated_user
-                st.rerun()
 
     except Exception as e:
         st.error("Login failed. Invalid Credentials")

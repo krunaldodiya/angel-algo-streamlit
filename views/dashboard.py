@@ -19,12 +19,12 @@ def Dashboard():
 
     thread = get_thread()
 
-    start_button = st.button("Running" if thread == None else "Start", key="start_button", disabled=thread == None)
+    start_button = st.button("Start" if thread == None else "Running", key="start_button", disabled=thread != None)
 
     if thread == None:
-        stop_button = st.button("Stop", key="stop_button")
-    else:
         stop_button = None
+    else:
+        stop_button = st.button("Stop", key="stop_button")
 
     def on_updates(data):
         if 'error' in data:

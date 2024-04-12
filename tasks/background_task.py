@@ -19,7 +19,9 @@ class BackgroundTask:
             thread.start()
 
     def exit_positions(self, message):
-        print(message)
+        print("message", message)
+        position_query = self.token_manager.http_client.position()
+        print("position_query", position_query)
 
     def background_task(self, localId, on_updates):
         try:

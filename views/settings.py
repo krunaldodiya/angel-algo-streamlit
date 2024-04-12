@@ -1,6 +1,5 @@
 import streamlit as st
 
-from libs.auth import get_authenticated_user
 from libs.token_manager import validate_token_manager
 from libs.firebase import db
 
@@ -8,7 +7,7 @@ def Settings():
     try:
         st.title("Settings")
 
-        authenticated_user = get_authenticated_user("settings")
+        authenticated_user = st.session_state['authenticated_user']
 
         localId = authenticated_user['localId']
 

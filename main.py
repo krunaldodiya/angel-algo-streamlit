@@ -11,10 +11,10 @@ from views.risk_reward import RiskReward
 from views.settings import Settings
 
 if __name__ == "__main__":
-    # Authentication and Page Selection
-    authenticated_user = get_authenticated_user("main")
+    if "authenticated_user" not in st.session_state:
+        st.session_state['authenticated_user'] = get_authenticated_user()
 
-    if not authenticated_user:
+    if not st.session_state['authenticated_user']:
         page = Login()
     else:
         with st.sidebar:

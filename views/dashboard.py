@@ -1,7 +1,6 @@
 import streamlit as st
 
 from time import sleep
-from libs.auth import get_authenticated_user
 from libs.get_running_thread import get_thread
 from libs.risk_reward import get_risk_reward
 from tasks.background_task import BackgroundTask
@@ -11,14 +10,14 @@ def Dashboard():
     st.title("Auto Square Off Algo")
     st.write("This tool will auto square off based on MTM")
 
-    error_text = st.empty()
+    authenticated_user = st.session_state['authenticated_user']
 
-    st.session_state = {}
+    error_text = st.empty()
 
     if 'pnl' not in st.session_state:
         st.session_state['pnl'] = 0
 
-    authenticated_user = get_authenticated_user("dashboard")
+    st.session_state
 
     thread = get_thread()
 
@@ -42,6 +41,7 @@ def Dashboard():
     background_task = BackgroundTask()
 
     if start_button:
+        print("localId", authenticated_user['localId'])
         background_task.start_task(authenticated_user['localId'], on_updates)
         container_2.text("Running")
 

@@ -86,9 +86,9 @@ class BackgroundTask:
             elif overall_pnl >= self.target:
                 self.exit_positions("target hit")
             else:
-                print("overall_pnl", overall_pnl)
-                print("stoploss", self.stoploss)
-                print("target", self.target)
+                print("Stoploss", self.stoploss)
+                print("Target", self.target)
+                print("P&L", overall_pnl)
                 print("\n")
 
         def on_open(wsapp):

@@ -1,16 +1,19 @@
 import streamlit as st
 
+from time import sleep
 from libs.auth import get_authenticated_user
 from libs.get_running_thread import get_thread
+from libs.risk_reward import get_risk_reward
 from tasks.background_task import BackgroundTask
-from time import sleep
-from libs.risk_reward import get_risk_reward, load_data
+from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 def Dashboard():
     st.title("Auto Square Off Algo")
     st.write("This tool will auto square off based on MTM")
 
     error_text = st.empty()
+
+    st.session_state = {}
 
     if 'pnl' not in st.session_state:
         st.session_state['pnl'] = 0
@@ -19,12 +22,10 @@ def Dashboard():
 
     thread = get_thread()
 
-    start_button = st.button("Start" if thread == None else "Running", key="start_button", disabled=thread != None)
+    if thread:
+        add_script_run_ctx(thread)
 
-    if thread == None:
-        stop_button = None
-    else:
-        stop_button = st.button("Stop", key="stop_button")
+    start_button = st.button("Start" if thread is None else "Running", key="start_button", disabled=thread is not None)
 
     def on_updates(data):
         if 'error' in data:
@@ -37,9 +38,6 @@ def Dashboard():
 
     if start_button:
         background_task.start_task(authenticated_user['localId'], on_updates)
-
-    if stop_button:
-        background_task.stop_task()
 
     # Load existing values from JSON (or set defaults)
     stoploss, target = get_risk_reward()
@@ -60,5 +58,5 @@ def Dashboard():
             pnl_text.write(f":green[P&L: {pnl}]")
         else:
             pnl_text.write(f":black[P&L: {pnl}]")
-        
+
         sleep(1)

@@ -1,9 +1,8 @@
 import threading
 
 from libs.get_running_thread import get_thread
-from libs.risk_reward import get_risk_reward, load_data
+from libs.risk_reward import get_risk_reward
 from libs.token_manager import get_token_manager
-from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 class BackgroundTask:
     def __init__(self) -> None:
@@ -14,14 +13,8 @@ class BackgroundTask:
     def start_task(self, localId, on_updates):
         if not self.thread:
             self.thread = threading.Thread(target=self.background_task, args=(localId, on_updates), name="background_task")
-    
-        add_script_run_ctx(self.thread)
 
         self.thread.start()
-
-    def stop_task(self):
-        if self.sws:
-            self.sws.close_connection()
 
     def exit_positions(self, message):
         print(message)
@@ -83,10 +76,10 @@ class BackgroundTask:
             ltp = round(data['last_traded_price'] / 100, 2)
             
             self.tokens[data['token']]['ltp'] = ltp
-            
-            overall_pnl = sum(calculate_position_pnl(tick) for tick in self.tokens.values())
 
-            self.on_updates({'pnl': round(overall_pnl, 2)})
+            overall_pnl = round(sum(calculate_position_pnl(tick) for tick in self.tokens.values()), 2)
+
+            self.on_updates({'pnl': overall_pnl})
 
             if overall_pnl <= -self.stoploss:
                 self.exit_positions("stoploss hit")

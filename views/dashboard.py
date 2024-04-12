@@ -14,22 +14,20 @@ def Dashboard():
 
     error_text = st.empty()
 
-    if 'pnl' not in st.session_state:
-        st.session_state['pnl'] = 0
-
-    st.session_state
-
     thread = get_thread()
 
     if thread:
         add_script_run_ctx(thread)
 
+    if 'thread_status' not in st.session_state:
+        st.session_state['thread_running'] = thread != None
+
     container_2 = st.empty()
 
-    if thread != None:
+    if st.session_state['thread_running']:
         start_button = container_2.text("Running")
     else:
-        start_button = container_2.button("Start", key="start_button", disabled=False)
+        start_button = container_2.button("Start", key="start_button")
 
     def on_updates(data):
         if 'error' in data:
@@ -40,10 +38,11 @@ def Dashboard():
 
     background_task = BackgroundTask()
 
-    if start_button:
-        print("localId", authenticated_user['localId'])
-        background_task.start_task(authenticated_user['localId'], on_updates)
-        container_2.text("Running")
+    if start_button:        
+        if 'status' not in st.session_state:
+            background_task.start_task(authenticated_user['localId'], on_updates)
+            container_2.text("Running")
+            st.session_state['status'] = 'running'
 
     # Load existing values from JSON (or set defaults)
     stoploss, target = get_risk_reward()
@@ -55,14 +54,15 @@ def Dashboard():
 
     pnl_text = st.empty()
 
-    while True:
-        pnl = st.session_state['pnl']
+    if st.session_state['thread_running']:
+        while True:
+            pnl = st.session_state['pnl']
 
-        if pnl < 0:
-            pnl_text.write(f":red[P&L: {pnl}]")
-        elif pnl > 0:
-            pnl_text.write(f":green[P&L: {pnl}]")
-        else:
-            pnl_text.write(f":black[P&L: {pnl}]")
+            if pnl < 0:
+                pnl_text.write(f":red[P&L: {pnl}]")
+            elif pnl > 0:
+                pnl_text.write(f":green[P&L: {pnl}]")
+            else:
+                pnl_text.write(f":black[P&L: {pnl}]")
 
-        sleep(1)
+            sleep(1)

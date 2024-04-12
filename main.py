@@ -14,6 +14,9 @@ if __name__ == "__main__":
     if "authenticated_user" not in st.session_state:
         st.session_state['authenticated_user'] = get_authenticated_user()
 
+    if 'pnl' not in st.session_state:
+        st.session_state['pnl'] = 0
+
     if not st.session_state['authenticated_user']:
         page = Login()
     else:

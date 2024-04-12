@@ -1,7 +1,6 @@
 ------------------------------------------------------
 docker
 ------------------------------------------------------
-docker build -t angel-algo-streamlit .
 docker compose up -d --build
 
 

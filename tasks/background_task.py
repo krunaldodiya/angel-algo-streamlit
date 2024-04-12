@@ -41,7 +41,7 @@ class BackgroundTask:
             position_query = self.token_manager.http_client.position()
 
             if position_query['data']:
-                self.positions = position_query['data']
+                self.positions = [position for position in position_query['data'] if int(position['netqty']) != 0]
 
             if self.positions:
                 self.manage_positions()

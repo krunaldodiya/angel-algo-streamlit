@@ -12,8 +12,6 @@ def Dashboard():
 
     authenticated_user = st.session_state["authenticated_user"]
 
-    error_text = st.empty()
-
     thread = get_thread()
 
     if thread:
@@ -29,8 +27,11 @@ def Dashboard():
     else:
         start_button = container_2.button("Start", key="start_button")
 
+    error_text = st.empty()
+
     def on_updates(data):
         if 'error' in data:
+            st.session_state['error'] = data['error']
             error_text.warning(data['error'])
 
         if 'pnl' in data:
@@ -38,11 +39,10 @@ def Dashboard():
 
     background_task = BackgroundTask()
 
-    if start_button:        
-        if 'status' not in st.session_state:
-            background_task.start_task(authenticated_user['localId'], on_updates)
-            container_2.text("Running")
-            st.session_state['status'] = 'running'
+    if start_button:
+        background_task.start_task(authenticated_user['localId'], on_updates)
+        container_2.text("Running")
+        st.session_state['thread_running'] = 'running'
 
     # Load existing values from JSON (or set defaults)
     stoploss, target = get_risk_reward()

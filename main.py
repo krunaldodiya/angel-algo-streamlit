@@ -17,6 +17,9 @@ if __name__ == "__main__":
     if 'pnl' not in st.session_state:
         st.session_state['pnl'] = 0
 
+    if 'error' not in st.session_state:
+        st.session_state['error'] = ""
+
     if not st.session_state["authenticated_user"]:
         page = Login()
     else:

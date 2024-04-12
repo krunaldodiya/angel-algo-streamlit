@@ -3,18 +3,20 @@ import threading
 from libs.get_running_thread import get_thread
 from libs.risk_reward import get_risk_reward
 from libs.token_manager import get_token_manager
+from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 class BackgroundTask:
     def __init__(self) -> None:
-        self.thread = get_thread()
         self.token_manager = None
         self.sws = None
 
     def start_task(self, localId, on_updates):
-        if not self.thread:
-            self.thread = threading.Thread(target=self.background_task, args=(localId, on_updates), name="background_task")
+        thread = get_thread()
 
-        self.thread.start()
+        if not thread:
+            thread = threading.Thread(target=self.background_task, args=(localId, on_updates), name="background_task")
+            add_script_run_ctx(thread)
+            thread.start()
 
     def exit_positions(self, message):
         print(message)

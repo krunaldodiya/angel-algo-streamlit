@@ -25,7 +25,12 @@ def Dashboard():
     if thread:
         add_script_run_ctx(thread)
 
-    start_button = st.button("Start" if thread is None else "Running", key="start_button", disabled=thread is not None)
+    container_2 = st.empty()
+
+    if thread != None:
+        start_button = container_2.text("Running")
+    else:
+        start_button = container_2.button("Start", key="start_button", disabled=False)
 
     def on_updates(data):
         if 'error' in data:
@@ -38,6 +43,7 @@ def Dashboard():
 
     if start_button:
         background_task.start_task(authenticated_user['localId'], on_updates)
+        container_2.text("Running")
 
     # Load existing values from JSON (or set defaults)
     stoploss, target = get_risk_reward()

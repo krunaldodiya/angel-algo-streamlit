@@ -1,6 +1,7 @@
 import streamlit as st
 
 from libs.auth import authenticate
+from views.dashboard import Dashboard
 
 
 def Login():
@@ -12,6 +13,10 @@ def Login():
         submit = st.button(label="Authenticate", type="primary", key="login_submit_button")
 
         if submit:
-            authenticate(email, password)
+            authenticated_user = authenticate(email, password)
+
+            if authenticated_user:
+                st.session_state["authenticated_user"] = authenticated_user
+
     except Exception as e:
         st.error("Login failed. Invalid Credentials")

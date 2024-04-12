@@ -7,7 +7,7 @@ def Settings():
     try:
         st.title("Settings")
 
-        authenticated_user = st.session_state['authenticated_user']
+        authenticated_user = st.session_state["authenticated_user"]
 
         localId = authenticated_user['localId']
 

@@ -10,7 +10,7 @@ def Dashboard():
     st.title("Auto Square Off Algo")
     st.write("This tool will auto square off based on MTM")
 
-    authenticated_user = st.session_state['authenticated_user']
+    authenticated_user = st.session_state["authenticated_user"]
 
     error_text = st.empty()
 

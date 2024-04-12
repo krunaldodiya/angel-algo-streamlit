@@ -1,13 +1,15 @@
 import threading
 
 from libs.get_running_thread import get_thread
-from libs.risk_reward import load_data
+from libs.risk_reward import get_risk_reward, load_data
 from libs.token_manager import get_token_manager
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 class BackgroundTask:
     def __init__(self) -> None:
         self.thread = get_thread()
+        self.token_manager = None
+        self.sws = None
 
     def start_task(self, localId, on_updates):
         if not self.thread:
@@ -33,13 +35,7 @@ class BackgroundTask:
             self.mode = 1
             self.tokens = {}
 
-            self.token_manager = None
-            self.sws = None
-
-            data = load_data()
-
-            self.stoploss = data.get("stoploss")
-            self.target = data.get("target")
+            self.stoploss, self.target = get_risk_reward()
 
             self.positions = []
 

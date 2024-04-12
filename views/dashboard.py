@@ -1,9 +1,10 @@
 import streamlit as st
 
 from libs.auth import get_authenticated_user
+from libs.get_running_thread import get_thread
 from tasks.background_task import BackgroundTask
 from time import sleep
-from libs.risk_reward import load_data
+from libs.risk_reward import get_risk_reward, load_data
 
 def Dashboard():
     st.title("Auto Square Off Algo")
@@ -16,8 +17,14 @@ def Dashboard():
 
     authenticated_user = get_authenticated_user("dashboard")
 
-    start_button = st.button("Start", key="start_button")
-    stop_button = st.button("Stop", key="stop_button")
+    thread = get_thread()
+
+    start_button = st.button("Running" if thread == None else "Start", key="start_button", disabled=thread == None)
+
+    if thread == None:
+        stop_button = st.button("Stop", key="stop_button")
+    else:
+        stop_button = None
 
     def on_updates(data):
         if 'error' in data:
@@ -35,9 +42,7 @@ def Dashboard():
         background_task.stop_task()
 
     # Load existing values from JSON (or set defaults)
-    data = load_data()
-    stoploss = data.get("stoploss")
-    target = data.get("target")
+    stoploss, target = get_risk_reward()
 
     # Display current stoploss and target values (optional)
     if stoploss is not None and target is not None:

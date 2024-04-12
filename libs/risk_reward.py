@@ -18,3 +18,8 @@ def save_data(data):
     """Saves stoploss and target values to JSON file."""
     with open(DATA_FILE, "w") as file:
         json.dump(data, file, indent=2)  # Save with indentation for readability
+
+def get_risk_reward():
+    data = load_data()
+
+    return data.get("stoploss"), data.get("target")

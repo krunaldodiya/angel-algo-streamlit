@@ -1,4 +1,5 @@
 import threading
+from time import sleep
 
 from libs.get_running_thread import get_thread
 from libs.risk_reward import get_risk_reward
@@ -9,6 +10,7 @@ class BackgroundTask:
         self.token_manager = token_manager
         self.sws = None
         self.positions = []
+        self.exiting_positions = False
 
     def start_task(self, token_manager, on_updates):
         thread = get_thread()
@@ -20,28 +22,41 @@ class BackgroundTask:
 
     def exit_positions(self, message):
         try:
-            print("\n")
-            print("message", message)
+            if not self.positions or self.exiting_positions:
+                return
+            else:
+                print("\n")
+                print("message", message)
 
-            sorted_positions = sorted(self.positions, key=lambda x: int(x["netqty"]))
+                self.exiting_positions = True
 
-            for sorted_position in sorted_positions:
-                netqty = int(sorted_position['netqty'])
+                positions = self.positions.copy()
 
-                orderparams = {
-                    "variety": "NORMAL",
-                    "tradingsymbol": sorted_position['tradingsymbol'],
-                    "symboltoken": sorted_position['symboltoken'],
-                    "transactiontype": "BUY" if netqty < 0 else "SELL",
-                    "exchange": sorted_position['exchange'],
-                    "ordertype": "MARKET",
-                    "producttype": sorted_position['producttype'],
-                    "duration": "DAY",
-                    "quantity": abs(netqty),
-                }
+                sorted_positions = sorted(positions, key=lambda x: int(x["netqty"]))
 
-                orderid = self.token_manager.http_client.placeOrder(orderparams)
-                print("orderid", orderid)
+                for sorted_position in sorted_positions:
+                    netqty = int(sorted_position['netqty'])
+
+                    orderparams = {
+                        "variety": "NORMAL",
+                        "tradingsymbol": sorted_position['tradingsymbol'],
+                        "symboltoken": sorted_position['symboltoken'],
+                        "transactiontype": "BUY" if netqty < 0 else "SELL",
+                        "exchange": sorted_position['exchange'],
+                        "ordertype": "MARKET",
+                        "producttype": sorted_position['producttype'],
+                        "duration": "DAY",
+                        "quantity": abs(netqty),
+                    }
+
+                    orderid = self.token_manager.http_client.placeOrder(orderparams)
+
+                    if orderid:
+                        print("Order placed with orderid:", orderid)
+
+                self.positions = []
+                self.sws.close_connection()
+                self.exiting_positions = False
         except Exception as e:
             self.on_updates({'error': str(e)})
 
@@ -95,6 +110,9 @@ class BackgroundTask:
             print("error", error)
 
         def on_data(wsapp, data):
+            if not self.positions:
+                return
+            
             ltp = round(data['last_traded_price'] / 100, 2)
             
             self.tokens[data['token']]['ltp'] = ltp

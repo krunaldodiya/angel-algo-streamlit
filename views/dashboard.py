@@ -43,7 +43,7 @@ def Dashboard():
 
         if token_manager:
             background_task = BackgroundTask(authenticated_user, token_manager)
-            background_task.start_task(token_manager, on_updates)
+            background_task.start_task(on_updates)
             container_2.text("Running")
             st.session_state['thread_running'] = 'running'
 

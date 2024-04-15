@@ -14,10 +14,7 @@ def get_authenticated_user():
   try:
       data = cookie_manager.get("authenticated_user")
 
-      if not data:
-        return None
-      else:
-        return data
+      return data
   except Exception as e:
     return None
 

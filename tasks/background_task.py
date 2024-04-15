@@ -13,11 +13,11 @@ class BackgroundTask:
         self.positions = []
         self.exiting_positions = False
 
-    def start_task(self, token_manager, on_updates):
+    def start_task(self, on_updates):
         thread = get_thread()
 
         if not thread:
-            thread = threading.Thread(target=self.background_task, args=(token_manager, on_updates), name="background_task")
+            thread = threading.Thread(target=self.background_task, args=(self.authenticated_user, self.token_manager, on_updates), name="background_task")
             add_script_run_ctx(thread)
             thread.start()
 

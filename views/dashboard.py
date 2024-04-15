@@ -3,6 +3,7 @@ import streamlit as st
 from time import sleep
 from libs.get_running_thread import get_thread
 from libs.risk_reward import get_risk_reward
+from libs.token_manager import get_token_manager
 from tasks.background_task import BackgroundTask
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
@@ -40,9 +41,12 @@ def Dashboard():
     background_task = BackgroundTask()
 
     if start_button:
-        background_task.start_task(authenticated_user['localId'], on_updates)
-        container_2.text("Running")
-        st.session_state['thread_running'] = 'running'
+        token_manager = get_token_manager(localId=authenticated_user['localId'])
+
+        if token_manager:
+            background_task.start_task(token_manager, on_updates)
+            container_2.text("Running")
+            st.session_state['thread_running'] = 'running'
 
     # Load existing values from JSON (or set defaults)
     stoploss, target = get_risk_reward()

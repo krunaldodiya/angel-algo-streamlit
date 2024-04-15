@@ -10,11 +10,11 @@ class BackgroundTask:
         self.token_manager = None
         self.sws = None
 
-    def start_task(self, localId, on_updates):
+    def start_task(self, token_manager, on_updates):
         thread = get_thread()
 
         if not thread:
-            thread = threading.Thread(target=self.background_task, args=(localId, on_updates), name="background_task")
+            thread = threading.Thread(target=self.background_task, args=(token_manager, on_updates), name="background_task")
             add_script_run_ctx(thread)
             thread.start()
 
@@ -23,9 +23,9 @@ class BackgroundTask:
         # position_query = self.token_manager.http_client.position()
         # print("position_query", position_query)
 
-    def background_task(self, localId, on_updates):
+    def background_task(self, token_manager, on_updates):
         try:
-            self.localId = localId
+            self.token_manager = token_manager
             self.on_updates = on_updates
                 
             self.correlation_id = "abc123"
@@ -35,8 +35,6 @@ class BackgroundTask:
             self.stoploss, self.target = get_risk_reward()
 
             self.positions = []
-
-            self.token_manager = get_token_manager(localId=self.localId)
 
             position_query = self.token_manager.http_client.position()
 

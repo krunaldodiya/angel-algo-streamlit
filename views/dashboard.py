@@ -39,16 +39,18 @@ def Dashboard():
             st.session_state['pnl'] = data['pnl']
 
     if start_button:
-        token_manager = get_token_manager(localId=authenticated_user['localId'])
+        token_manager = get_token_manager(authenticated_user)
+
+        print("token_manager", token_manager)
 
         if token_manager:
-            background_task = BackgroundTask(token_manager)
+            background_task = BackgroundTask(authenticated_user, token_manager)
             background_task.start_task(token_manager, on_updates)
             container_2.text("Running")
             st.session_state['thread_running'] = 'running'
 
     # Load existing values from JSON (or set defaults)
-    stoploss, target = get_risk_reward()
+    stoploss, target = get_risk_reward(authenticated_user['localId'])
 
     # Display current stoploss and target values (optional)
     if stoploss is not None and target is not None:

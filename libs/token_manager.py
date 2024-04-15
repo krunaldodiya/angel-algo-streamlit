@@ -1,9 +1,9 @@
 from token_manager.angel_one_token_manager import AngelOneTokenManager
 from libs.firebase import db
 
-def get_token_manager(localId):
+def get_token_manager(authenticated_user):
     try:
-        data = db.child("brokers").child(localId).get().val()
+        data = db.child("brokers").child(authenticated_user['localId']).get().val()
 
         if not data:
             return None
@@ -15,7 +15,9 @@ def get_token_manager(localId):
             api_secret = data.get("api_secret")
             redirect_url = data.get("redirect_url")
 
-            return validate_token_manager(client_id, totp_key, mpin, api_key, api_secret, redirect_url)
+            return validate_token_manager(
+                client_id, totp_key, mpin, api_key, api_secret, redirect_url
+            )
     except Exception as e:
         print("get_token_manager", e)
         return None

@@ -6,7 +6,8 @@ from libs.risk_reward import get_risk_reward
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 class BackgroundTask:
-    def __init__(self, token_manager) -> None:
+    def __init__(self, authenticated_user, token_manager) -> None:
+        self.authenticated_user = authenticated_user
         self.token_manager = token_manager
         self.sws = None
         self.positions = []
@@ -60,8 +61,9 @@ class BackgroundTask:
         except Exception as e:
             self.on_updates({'error': str(e)})
 
-    def background_task(self, token_manager, on_updates):
+    def background_task(self, authenticated_user, token_manager, on_updates):
         try:
+            self.authenticated_user = authenticated_user
             self.token_manager = token_manager
             self.on_updates = on_updates
                 
@@ -69,7 +71,7 @@ class BackgroundTask:
             self.mode = 1
             self.tokens = {}
 
-            self.stoploss, self.target = get_risk_reward()
+            self.stoploss, self.target = get_risk_reward(authenticated_user['localId'])
 
             position_query = self.token_manager.http_client.position()
 

@@ -19,7 +19,7 @@ def get_authenticated_user():
       else:
         return data
   except Exception as e:
-    print(e)
+    return None
 
 def authenticate(email, password):
   user = auth.sign_in_with_email_and_password(email, password)

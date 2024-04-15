@@ -41,33 +41,31 @@ def Dashboard():
     if start_button:
         token_manager = get_token_manager(authenticated_user)
 
-        print("token_manager", token_manager)
-
         if token_manager:
             background_task = BackgroundTask(authenticated_user, token_manager)
             background_task.start_task(token_manager, on_updates)
             container_2.text("Running")
             st.session_state['thread_running'] = 'running'
 
-    # Load existing values from JSON (or set defaults)
-    stoploss, target = get_risk_reward(authenticated_user['localId'])
+        # Load existing values from JSON (or set defaults)
+        stoploss, target = get_risk_reward(authenticated_user['localId'])
 
-    # Display current stoploss and target values (optional)
-    if stoploss is not None and target is not None:
-        st.write(f":red[SL: {stoploss}]")
-        st.write(f":green[TGT: {target}]")
+        # Display current stoploss and target values (optional)
+        if stoploss is not None and target is not None:
+            st.write(f":red[SL: {stoploss}]")
+            st.write(f":green[TGT: {target}]")
 
-    pnl_text = st.empty()
+        pnl_text = st.empty()
 
-    if st.session_state['thread_running']:
-        while True:
-            pnl = st.session_state['pnl']
+        if st.session_state['thread_running']:
+            while True:
+                pnl = st.session_state['pnl']
 
-            if pnl < 0:
-                pnl_text.write(f":red[P&L: {pnl}]")
-            elif pnl > 0:
-                pnl_text.write(f":green[P&L: {pnl}]")
-            else:
-                pnl_text.write(f":black[P&L: {pnl}]")
+                if pnl < 0:
+                    pnl_text.write(f":red[P&L: {pnl}]")
+                elif pnl > 0:
+                    pnl_text.write(f":green[P&L: {pnl}]")
+                else:
+                    pnl_text.write(f":black[P&L: {pnl}]")
 
-            sleep(1)
+                sleep(1)

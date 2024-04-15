@@ -38,12 +38,11 @@ def Dashboard():
         if 'pnl' in data:
             st.session_state['pnl'] = data['pnl']
 
-    background_task = BackgroundTask()
-
     if start_button:
         token_manager = get_token_manager(localId=authenticated_user['localId'])
 
         if token_manager:
+            background_task = BackgroundTask(token_manager)
             background_task.start_task(token_manager, on_updates)
             container_2.text("Running")
             st.session_state['thread_running'] = 'running'

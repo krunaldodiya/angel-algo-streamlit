@@ -2,13 +2,13 @@ import threading
 
 from libs.get_running_thread import get_thread
 from libs.risk_reward import get_risk_reward
-from libs.token_manager import get_token_manager
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 class BackgroundTask:
-    def __init__(self) -> None:
-        self.token_manager = None
+    def __init__(self, token_manager) -> None:
+        self.token_manager = token_manager
         self.sws = None
+        self.positions = []
 
     def start_task(self, token_manager, on_updates):
         thread = get_thread()
@@ -19,9 +19,31 @@ class BackgroundTask:
             thread.start()
 
     def exit_positions(self, message):
-        print("message", message)
-        # position_query = self.token_manager.http_client.position()
-        # print("position_query", position_query)
+        try:
+            print("\n")
+            print("message", message)
+
+            sorted_positions = sorted(self.positions, key=lambda x: int(x["netqty"]))
+
+            for sorted_position in sorted_positions:
+                netqty = int(sorted_position['netqty'])
+
+                orderparams = {
+                    "variety": "NORMAL",
+                    "tradingsymbol": sorted_position['tradingsymbol'],
+                    "symboltoken": sorted_position['symboltoken'],
+                    "transactiontype": "BUY" if netqty < 0 else "SELL",
+                    "exchange": sorted_position['exchange'],
+                    "ordertype": "MARKET",
+                    "producttype": sorted_position['producttype'],
+                    "duration": "DAY",
+                    "quantity": abs(netqty),
+                }
+
+                orderid = self.token_manager.http_client.placeOrder(orderparams)
+                print("orderid", orderid)
+        except Exception as e:
+            self.on_updates({'error': str(e)})
 
     def background_task(self, token_manager, on_updates):
         try:
@@ -33,8 +55,6 @@ class BackgroundTask:
             self.tokens = {}
 
             self.stoploss, self.target = get_risk_reward()
-
-            self.positions = []
 
             position_query = self.token_manager.http_client.position()
 

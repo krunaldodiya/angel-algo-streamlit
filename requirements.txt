@@ -5,6 +5,5 @@ pyrebase4
 smartapi-python
 pyotp
 logzero
-websocket
 websocket-client
 python-dotenv

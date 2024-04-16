@@ -1,6 +1,5 @@
 import pyotp
 
-from typing import Any
 from SmartApi import SmartConnect
 from SmartApi.smartWebSocketV2 import SmartWebSocketV2
 from token_manager.base_token_manager import BaseTokenManager

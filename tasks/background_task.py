@@ -91,7 +91,7 @@ class BackgroundTask:
 
             self.tokens[token] = {
                 'tradingsymbol': item['tradingsymbol'], 
-                "netprice": float(item['netprice']), 
+                "netprice": float(item['totalbuyavgprice']) if int(item['netqty']) > 0 else float(item['totalsellavgprice']), 
                 "netqty": int(item['netqty']), 
                 'ltp': None
             }

@@ -93,7 +93,7 @@ class BackgroundTask:
                 'tradingsymbol': item['tradingsymbol'], 
                 "avgnetprice": float(item['avgnetprice']), 
                 "netqty": int(item['netqty']), 
-                'ltp': float(item['ltp'])
+                'ltp': None
             }
 
         token_list = [
@@ -114,24 +114,24 @@ class BackgroundTask:
         def on_data(wsapp, data):
             if not self.positions:
                 return
-            
+
             ltp = round(data['last_traded_price'] / 100, 2)
-            
             self.tokens[data['token']]['ltp'] = ltp
+            
+            if all(token['ltp'] for token in self.tokens.values()):
+                overall_pnl = round(sum(calculate_position_pnl(tick) for tick in self.tokens.values()), 2)
 
-            overall_pnl = round(sum(calculate_position_pnl(tick) for tick in self.tokens.values()), 2)
+                self.on_updates({'pnl': overall_pnl})
 
-            self.on_updates({'pnl': overall_pnl})
-
-            if overall_pnl <= -self.stoploss:
-                self.exit_positions("stoploss hit")
-            elif overall_pnl >= self.target:
-                self.exit_positions("target hit")
-            else:
-                print("Stoploss", self.stoploss)
-                print("Target", self.target)
-                print("P&L", overall_pnl)
-                print("\n")
+                if overall_pnl <= -self.stoploss:
+                    self.exit_positions("stoploss hit")
+                elif overall_pnl >= self.target:
+                    self.exit_positions("target hit")
+                else:
+                    print("Stoploss", self.stoploss)
+                    print("Target", self.target)
+                    print("P&L", overall_pnl)
+                    print("\n")
 
         def on_open(wsapp):
             self.sws.subscribe(self.correlation_id, self.mode, token_list)

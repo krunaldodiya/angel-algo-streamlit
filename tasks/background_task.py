@@ -91,7 +91,7 @@ class BackgroundTask:
 
             self.tokens[token] = {
                 'tradingsymbol': item['tradingsymbol'], 
-                "avgnetprice": float(item['avgnetprice']), 
+                "netprice": float(item['netprice']), 
                 "netqty": int(item['netqty']), 
                 'ltp': None
             }
@@ -103,10 +103,9 @@ class BackgroundTask:
             }
         ]
 
-        def calculate_position_pnl(tick):
-            pnl =  tick['ltp'] - tick['avgnetprice'] if tick['netqty'] > 0 else tick['avgnetprice'] - tick['ltp']
-
-            return pnl * abs(tick['netqty'])
+        def calculate_position_pnl(token):
+            pnl =  token['ltp'] - token['netprice'] if token['netqty'] > 0 else token['netprice'] - token['ltp']
+            return pnl * abs(token['netqty'])
 
         def on_error(wsapp, error):
             print("error", error)
@@ -117,9 +116,9 @@ class BackgroundTask:
 
             ltp = round(data['last_traded_price'] / 100, 2)
             self.tokens[data['token']]['ltp'] = ltp
-            
+
             if all(token['ltp'] for token in self.tokens.values()):
-                overall_pnl = round(sum(calculate_position_pnl(tick) for tick in self.tokens.values()), 2)
+                overall_pnl = round(sum([calculate_position_pnl(token) for token in self.tokens.values()]), 2)
 
                 self.on_updates({'pnl': overall_pnl})
 
